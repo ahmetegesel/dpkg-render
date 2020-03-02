@@ -1,0 +1,25 @@
+{
+  "name": "dpkg-render",
+  "version": "0.0.1",
+  "description": "A PoC package that renders info for the installed packages in a Debian OS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ahmetegesel/dpkg-render.git"
+  },
+  "keywords": [
+    "debian",
+    "dpkg",
+    "nodejs",
+    "docker"
+  ],
+  "author": "Ahmet Egesel",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ahmetegesel/dpkg-render/issues"
+  },
+  "homepage": "https://github.com/ahmetegesel/dpkg-render#readme"
+}

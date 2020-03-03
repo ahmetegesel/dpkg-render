@@ -1,9 +1,9 @@
 version: '3'
 services:
-  dpkg-render-api:
+  dpkg-render:
     build:
       context: .
       dockerfile: Dockerfile
-    image: dpkg-render-api:latest
+    image: dpkg-render:latest
     ports:
       - "8080:8080"

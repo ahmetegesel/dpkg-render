@@ -1,12 +1,10 @@
 const express = require('express');
-const cors = require('cors')
 const path = require('path');
 const dpkgProvider = require('./dpkgProvider');
 
 const router = express.Router();
 
 const app = express();
-app.use(cors())
 
 const provider = new dpkgProvider();
 

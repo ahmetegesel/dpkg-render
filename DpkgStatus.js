@@ -37,16 +37,10 @@ const parseDependencies = (text) => {
   }
   const dependenciesLine = matches[1];
 
-  // 'libc6 (>= 2.2.5)' -> 'libc6'
   const parsePackageName = (packageString) => (
     packageString.split(' ').shift()
   );
 
-  /*
-   * E.g.
-   * 'libc6 (>= 2.2.5), dpkg (>= 1.15.4) | install-info' ->
-   * [{ main: 'libc6', alternatives: [] }, { main: 'dpkg', alternatives: ['install-info'] }]
-   */
   const dependencies = dependenciesLine
     .split(', ')
     .map(string => {
@@ -70,15 +64,11 @@ const parseDependencies = (text) => {
 
 
 module.exports = function () {
-  this.packages = {};
+  const packages = {};
+  let packageNames = [];
 
-  this.getPackage = (name) => {
-    return this.packages[name]
-  }
-
-  this.provide = () => {
+  const loadPackages = () => {
     const file = fs.readFileSync('/var/lib/dpkg/status', 'UTF-8');
-    const packageNames = [];
 
     file
       .split('\n\n')
@@ -87,12 +77,26 @@ module.exports = function () {
 
         if (packageRaw) {
           const parsedPackage = parsePackage(packageRaw);
-          this.packages[parsedPackage.name] = parsedPackage;
+          packages[parsedPackage.name] = parsedPackage;
           packageNames.push(parsedPackage.name);
           delete parsedPackage.name;
         }
       });
 
-    return packageNames.sort();
+    packageNames = packageNames.sort();
   }
+
+  this.getPackage = (name) => {
+    return packages[name]
+  }
+
+  this.getPackages = () => {
+    return packages;
+  }
+
+  this.getPackageNames = () => {
+    return packageNames;
+  }
+
+  loadPackages();
 }

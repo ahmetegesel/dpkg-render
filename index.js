@@ -1,20 +1,25 @@
 const express = require('express');
 const path = require('path');
-const dpkgProvider = require('./dpkgProvider');
+const DpkgStatus = require('./DpkgStatus');
 
 const router = express.Router();
 
 const app = express();
 
-const provider = new dpkgProvider();
+const dpkgStatus = new DpkgStatus();
 
-router.get('/', (req, res) => res.sendFile(path.join(__dirname + '/Views/index.html')));
-router.get('/packages', (req, res) => res.json(provider.provide()))
-router.get('/packages/:name', (req, res) => res.json(provider.getPackage(req.params.name)));
-router.get('/:name', (req, res) => res.sendFile(path.join(__dirname + '/Views/package.html')));
+app.set('view engine', 'pug')
+app.set('views', path.join(__dirname, 'views'))
+
+router.get('/', (req, res) => res.render('index', {
+  packages: dpkgStatus.getPackageNames()
+}));
+router.get('/:name', (req, res) => res.render('package', {
+  name: req.params.name,
+  ...dpkgStatus.getPackage(req.params.name)
+}));
 
 
-app.use(express.static(__dirname + '/Views'));
 app.use('/', router);
 
 app.listen(8080, () => console.log('localhost:8080'))

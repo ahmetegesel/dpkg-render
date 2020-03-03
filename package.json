@@ -22,10 +22,12 @@
   },
   "homepage": "https://github.com/ahmetegesel/dpkg-render#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "pug": "^2.0.4"
   },
   "devDependencies": {
     "@types/express": "^4.17.2",
-    "@types/node": "^13.7.7"
+    "@types/node": "^13.7.7",
+    "@types/pug": "^2.0.4"
   }
 }

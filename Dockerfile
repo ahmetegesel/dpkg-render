@@ -7,7 +7,8 @@ RUN apt-get update && apt-get upgrade -y && \
 RUN mkdir -p /usr/src/dpkg-render
 WORKDIR /usr/src/dpkg-render
 
-RUN npm install express cors
+run npm i -g npm
+RUN npm i express cors pug
 
 COPY . /usr/src/dpkg-render
 

@@ -14,7 +14,7 @@ app.set('views', path.join(__dirname, 'views'))
 router.get('/', (req, res) => res.render('index', {
   packages: dpkgStatus.getPackageNames()
 }));
-router.get('/:name', (req, res) => res.render('package', {
+router.get('/package/:name', (req, res) => res.render('package', {
   name: req.params.name,
   ...dpkgStatus.getPackage(req.params.name)
 }));

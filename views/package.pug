@@ -1,8 +1,22 @@
 extends _layout
 
 block header
-    h1 DPKG Package Info - #{name}
+    h1 DPKG Package Info of #{name}
 block content
-    div.name= name
-    div.description= description
-    div.dependencies= dependencies
+    div.description-container
+        h2 Description
+        div.description= description
+    div.dependencies-container
+        h2 Dependencies
+        div.dependencies
+            each dependency in dependencies
+                if dependency.isInstalled
+                    a(href=`/package/${dependency.name}`) #{dependency.name}
+                else
+                    | #{dependency.name}
+                |
+                |
+            else
+                | No Dependencies Found
+    |
+    a(href='/') Go back to Index.

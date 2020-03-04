@@ -1,8 +1,8 @@
 extends _layout
 
 block header
-    h1 DPKG Package Info
+    h1 DPKG Package Index
 block content
     ul
         for package in packages
-            li: a(href=`/${package}`) #{package}
+            li: a(href=`/package/${package}`) #{package}

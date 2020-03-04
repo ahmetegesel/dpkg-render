@@ -11,7 +11,3 @@ run npm i -g npm
 RUN npm i express cors pug
 
 COPY . /usr/src/dpkg-render
-
-EXPOSE 8080
-
-CMD ["node", "index.js"]

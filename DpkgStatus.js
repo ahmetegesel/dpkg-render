@@ -1,69 +1,78 @@
 const fs = require('fs')
 
-const parsePackage = (text, index) => {
-  try {
-    return {
-      name: parseName(text),
-      description: parseDescription(text),
-      dependencies: parseDependencies(text),
-      dependentPackages: []
-    }
-  } catch (error) {
-    throw new Error(`Failed to parse entry ${index}: ${error.message}`);
+
+const parsePackage = (text) => {
+  return {
+    name: parseName(text),
+    description: parseDescription(text),
+    dependencies: parseDependencies(text)
   }
 };
 
 const parseName = (text) => {
+  // Returns matches of the pattern Package:[white space][any text][newline]
+  // e.g.: Package: some package \n Description: some description
+  // This would return only some package along with the whole line, till Description
+  // First element of the array is the whole match, and second element is the grouping part
+  // which is the part we are looking for: some package
   const matches = text.match(/Package:\s(.+)\n/);
+
   if (matches && matches[1]) {
     return matches[1];
   }
-  throw new Error(`Key "Package" not found`);
+
+  throw new Error(`No Package Name Found`);
 };
 
 const parseDescription = (text) => {
   const matches = text.match(/Description:\s(.+\n(\s.+\n)*)/);
+
   if (matches && matches[1]) {
     return matches[1];
   }
-  throw new Error(`Key "Description" not found`);
+
+  throw new Error(`No Description Found`);
 }
 
 const parseDependencies = (text) => {
   const matches = text.match(/\nDepends:\s(.+)\n/);
+
   if (!matches || !matches[1]) {
-    // No dependencies for this package
+    // No dependencies found for the package. Return an empty array.
     return [];
   }
-  const dependenciesLine = matches[1];
+
+  const dependencyText = matches[1];
 
   const parsePackageName = (packageString) => (
+    // Ignoring version section E.g.: "package-name (version)"
     packageString.split(' ').shift()
   );
 
-  const dependencies = dependenciesLine
+  return dependencyText
     .split(', ')
     .map(string => {
       const packages = string.split(' | ');
-      if (!packages || packages.length < 1) {
-        throw new Error(`Invalid dependency format (${dependenciesLine})`);
-      }
-      const dependency = {
-        main: parsePackageName(packages.shift()),
-        alternatives: packages.map(parsePackageName)
-      };
-      return dependency;
-    });
 
-  // Filter out duplicates comparing by dependency.main
-  return dependencies
-    .filter((dependency, index) =>
-      dependencies.findIndex(otherDependency => otherDependency.main === dependency.main) === index
-    );
+      if (!packages || packages.length < 1) {
+        throw new Error(`Dependency format is invalid -> ${dependencyText}`);
+      }
+
+      return packages.map(parsePackageName);
+    })
+    .reduce((prev, next) => [...prev, ...next]);
 };
 
+const markInstalledDependencies = (dependencies, packages) => {
+  return dependencies ? dependencies.map(dependency => (
+    {
+      name: dependency,
+      isInstalled: !!packages[dependency]
+    }
+  )) : [];
+}
 
-module.exports = function () {
+const DpkgStatus = function () {
   const packages = {};
   let packageNames = [];
 
@@ -80,18 +89,20 @@ module.exports = function () {
           packages[parsedPackage.name] = parsedPackage;
           packageNames.push(parsedPackage.name);
           delete parsedPackage.name;
+
+          // DEBUG
+          parsedPackage.raw = packageRaw;
         }
       });
 
     packageNames = packageNames.sort();
-  }
+  };
 
   this.getPackage = (name) => {
-    return packages[name]
-  }
-
-  this.getPackages = () => {
-    return packages;
+    return {
+      ...packages[name],
+      dependencies: markInstalledDependencies(packages[name].dependencies, packages)
+    }
   }
 
   this.getPackageNames = () => {
@@ -99,4 +110,7 @@ module.exports = function () {
   }
 
   loadPackages();
-}
+};
+
+
+module.exports = DpkgStatus

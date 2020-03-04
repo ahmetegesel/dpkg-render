@@ -7,3 +7,4 @@ services:
     image: dpkg-render:latest
     ports:
       - "8080:8080"
+    command: node index.js

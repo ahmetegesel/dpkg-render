@@ -9,6 +9,9 @@ const fs = require('fs');
  * @return {{}} Mapped object containing name of the package and its install status
  */
 function markInstalledDependencies(dependencies, packages) {
+  if (!packages)
+    throw new Error('Parameter packages must be given.');
+
   return dependencies ? dependencies.map(dependency => (
     {
       name: dependency,
@@ -27,6 +30,9 @@ class DpkgStatusParser {
    * @return {{}} Parsed object containing only required fields related to the package.
    */
   parsePackage(packageContent) {
+    if (!packageContent)
+      throw new Error('Parameter packageContent must be given.');
+
     return {
       name: this.parseName(packageContent),
       description: this.parseDescription(packageContent),
@@ -85,8 +91,7 @@ class DpkgStatusParser {
     const matches = packageContent.match(/\nDepends:\s(.+)\n/);
 
     if (!matches || !matches[1]) {
-      // No dependencies found for the package. Return an empty array.
-      return [];
+      return []; // No dependencies found for the package. Return an empty array.
     }
 
     const individualDependencyDelimiter = ', ';
@@ -130,6 +135,9 @@ function loadPackages() {
   const parser = new DpkgStatusParser();
 
   const statusFile = fs.readFileSync('/var/lib/dpkg/status', 'UTF-8');
+
+  if (!statusFile)
+    throw new Error("status file does not exist.");
 
   statusFile
     .split('\n\n')
@@ -179,6 +187,12 @@ class DpkgStatus {
    * @return {{}} Basic info about the installed package in the OS.
    */
   getPackage(name) {
+    if (!name)
+      throw new Error('Parameter name must be given.');
+
+    if (!this._packages[name])
+      throw new Error('No package found with given name.');
+
     return {
       ...this._packages[name],
       dependencies: markInstalledDependencies(this._packages[name].dependencies, this._packages)

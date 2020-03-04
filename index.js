@@ -8,8 +8,8 @@ const app = express();
 
 const dpkgStatus = new DpkgStatus();
 
-app.set('view engine', 'pug')
-app.set('views', path.join(__dirname, 'views'))
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
 
 router.get('/', (req, res) => res.render('index', {
   packages: dpkgStatus.getPackageNames()
@@ -22,4 +22,4 @@ router.get('/package/:name', (req, res) => res.render('package', {
 
 app.use('/', router);
 
-app.listen(8080, () => console.log('localhost:8080'))
+app.listen(8080, () => console.log('localhost:8080'));

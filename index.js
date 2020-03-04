@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const DpkgStatus = require('./DpkgStatus');
+const { DpkgStatus } = require('./DpkgStatus');
 
 const router = express.Router();
 

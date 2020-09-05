@@ -8,6 +8,6 @@ RUN mkdir -p /usr/src/dpkg-render
 WORKDIR /usr/src/dpkg-render
 
 run npm i -g npm
-RUN npm i express cors pug
+RUN npm i express pug
 
 COPY . /usr/src/dpkg-render

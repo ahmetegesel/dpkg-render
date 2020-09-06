@@ -14,7 +14,6 @@ export default function parseDependencies(packageContent) {
     return [];
   }
 
-  // Collects all packages along with their other info like version and such
   const dependencies = depends.split(/\s?(?:[(][^)]*[)]|[|]|,)[,\s|]?\s?/g) || [];
 
   return [...new Set(dependencies)];

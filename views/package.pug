@@ -1,8 +1,11 @@
 extends _layout
 
 block header
-    h1 DPKG Package Info of #{name}
+    h1 DPKG Package Details
 block content
+    div.description-container
+        h2 Name
+        div.description= name
     div.description-container
         h2 Description
         div.description= description
@@ -19,4 +22,5 @@ block content
             else
                 | No Dependencies Found
     |
+    br
     a(href='/') Go back to Index.

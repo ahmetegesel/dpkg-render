@@ -15,10 +15,7 @@ export default function parseDependencies(packageContent) {
   }
 
   // Collects all packages along with their other info like version and such
-  const dependencies = depends.match(/(\b[\w\-.]+\b)(?:[\s,])/g) || [];
+  const dependencies = depends.split(/\s?(?:[(][^)]*[)]|[|]|,)[,\s|]?\s?/g) || [];
 
-  // Gets only the name from the match
-  const trimmedDependencies = dependencies.map((dep) => dep.match(/\b[\w\-.]+\b/)[0]);
-
-  return [...new Set(trimmedDependencies)];
+  return [...new Set(dependencies)];
 }

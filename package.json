@@ -4,7 +4,7 @@
   "description": "A PoC package that renders info for the installed packages in a Debian OS",
   "scripts": {
     "start": "nodemon --delay 1.5 --exec babel-node ./index.js",
-    "debug": "nodemon --delay 1.5 --inspect ./index.js",
+    "debug": "nodemon --delay 1.5 --inspect --exec babel-node ./index.js",
     "test": "jest",
     "lint": "eslint ./ --ext js",
     "lint:fix": "eslint ./ --ext js --fix"

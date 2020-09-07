@@ -108,9 +108,11 @@ export default class DpkgStatus {
   #dependedIndex;
 
   constructor() {
+    const path = process.env.APP_DPKG_FILE_PATH;
+
     this.#cacheStorage = new FileCacheStorage({
-      path: process.env.APP_DPKG_FILE_PATH,
-      getter: () => loadPackages(process.env.APP_DPKG_FILE_PATH),
+      path,
+      getter: () => loadPackages(path),
     });
   }
 

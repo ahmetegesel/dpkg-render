@@ -34,22 +34,29 @@ export function loadPackages(path) {
     throw new Error('status file does not exist.');
   }
 
+  const dependedIndex = {};
+
   const packages = statusFile
     .split('\n\n')
     .reduce((acc, packageBlock) => {
-      const packageContent = packageBlock.trim();
-
-      if (!packageContent) {
+      if (!packageBlock) {
         return acc;
       }
 
       const parsedPackage = {
-        name: parseName(packageContent),
-        description: parseDescription(packageContent),
-        dependencies: parseDependencies(packageContent),
+        name: parseName(packageBlock),
+        description: parseDescription(packageBlock),
+        dependencies: parseDependencies(packageBlock),
       };
       acc[parsedPackage.name] = parsedPackage;
+
+      // indexing package names
       packageNames.push(parsedPackage.name);
+
+      // indexing packages that depends on this package
+      parsedPackage.dependencies.forEach((dep) => {
+        dependedIndex[dep] = (dependedIndex[dep] || []).concat(parsedPackage.name);
+      });
 
       return acc;
     }, {});
@@ -57,6 +64,7 @@ export function loadPackages(path) {
   return {
     packages,
     packageNames: packageNames.sort(),
+    dependedIndex,
   };
 }
 
@@ -97,6 +105,8 @@ export default class DpkgStatus {
 
   #packageNames;
 
+  #dependedIndex;
+
   constructor() {
     this.#cacheStorage = new FileCacheStorage({
       path: process.env.APP_DPKG_FILE_PATH,
@@ -113,10 +123,11 @@ export default class DpkgStatus {
    * @function
    * */
   sync() {
-    const { packages, packageNames } = this.#cacheStorage.get();
+    const { packages, packageNames, dependedIndex } = this.#cacheStorage.get();
 
     this.#packages = packages;
     this.#packageNames = packageNames;
+    this.#dependedIndex = dependedIndex;
   }
 
   /**
@@ -124,7 +135,11 @@ export default class DpkgStatus {
    *
    * @function
    * @param {string} name  Name of the package.
-   * @return {{name: string, description: string, dependencies: Array<{ name: string, isInstalled: boolean}>}} Basic info about the package.
+   * @return {{
+   *  name: string,
+   *  description: string,
+   *  dependencies: Array<{ name: string, isInstalled: boolean}>,
+   *  dependedOnBy: Array<{ name: string, isInstalled: boolean}>}} Basic info about the package.
    */
   getPackage(name) {
     if (!name) throw new Error('Parameter name must be given.');
@@ -136,6 +151,7 @@ export default class DpkgStatus {
     return {
       ...this.#packages[name],
       dependencies: markInstalledDependencies(this.#packages[name].dependencies, this.#packages),
+      dependedOnBy: markInstalledDependencies(this.#dependedIndex[name], this.#packages),
     };
   }
 

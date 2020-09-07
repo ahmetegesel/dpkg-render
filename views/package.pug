@@ -21,6 +21,18 @@ block content
                 |
             else
                 | No Dependencies Found
+    div.depended-on-by-container
+        h2 Depended on by
+        div.dependencies
+            each dependency in dependedOnBy
+              if dependency.isInstalled
+                  a(href=`/package/${dependency.name}`) #{dependency.name}
+              else
+                  | #{dependency.name}
+              |
+              |
+            else
+              | No Dependencies Found
     |
     br
     a(href='/') Go back to Index.

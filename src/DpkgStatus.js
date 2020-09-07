@@ -94,7 +94,8 @@ export function markInstalledDependencies(dependencies, packages) {
  *
  * This class is responsible for storing the index and the information of the
  * packages that are installed on the OS. The information consists of the name of the package,
- * the description of the package, and the packages that are dependent to each package.
+ * the description of the package, the packages that this package depends on,
+ * and the packages that depend on this package.
  *
  * @class
  */

@@ -19,7 +19,7 @@
     "nodejs",
     "docker"
   ],
-  "author": "Ahmet Egesel",
+  "author": "Ahmet Egesel <ahmetegesel@hotmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/ahmetegesel/dpkg-render/issues"
